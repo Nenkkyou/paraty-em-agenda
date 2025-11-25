@@ -65,10 +65,10 @@ export function EventDetailsPage() {
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.address)}`
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-5xl mx-auto px-4 md:px-8 py-8">
+    <div className="min-h-screen bg-background pb-8">
+      <div className="max-w-5xl mx-auto px-4 md:px-8 py-6 md:py-8">
         <Link to="/">
-          <Button variant="ghost" size="sm" className="gap-2 mb-6">
+          <Button variant="ghost" size="sm" className="gap-2 mb-6 -ml-2">
             <ArrowLeft size={18} />
             Voltar
           </Button>
@@ -76,7 +76,7 @@ export function EventDetailsPage() {
 
         {isCanceled && (
           <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg flex items-start gap-3">
-            <Warning size={24} className="text-destructive flex-shrink-0 mt-0.5" />
+            <Warning size={24} className="text-destructive flex-shrink-0 mt-0.5" weight="fill" />
             <div>
               <h3 className="font-semibold text-destructive mb-1">Evento Cancelado</h3>
               <p className="text-sm text-muted-foreground">
@@ -87,7 +87,7 @@ export function EventDetailsPage() {
         )}
 
         <div className="bg-card rounded-lg overflow-hidden border border-border shadow-lg">
-          <div className="relative aspect-[21/9] overflow-hidden">
+          <div className="relative aspect-[21/9] sm:aspect-[16/7] overflow-hidden bg-muted">
             <img
               src={event.imageUrl}
               alt={event.title}
@@ -105,48 +105,48 @@ export function EventDetailsPage() {
             )}
           </div>
 
-          <div className="p-6 md:p-8 space-y-6">
+          <div className="p-4 sm:p-6 md:p-8 space-y-6">
             <div className="space-y-4">
-              <div className="flex flex-wrap items-center gap-3">
-                <Badge variant="outline" className={cn('text-sm', getCategoryColor(event.category))}>
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="outline" className={cn('text-xs sm:text-sm', getCategoryColor(event.category))}>
                   {getCategoryLabel(event.category)}
                 </Badge>
                 {isCanceled && (
-                  <Badge variant="destructive" className="text-sm">
+                  <Badge variant="destructive" className="text-xs sm:text-sm">
                     Cancelado
                   </Badge>
                 )}
                 {event.status === 'scheduled' && (
-                  <Badge variant="secondary" className="text-sm">
+                  <Badge variant="secondary" className="text-xs sm:text-sm">
                     Agendado
                   </Badge>
                 )}
               </div>
 
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground leading-tight">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground leading-tight">
                 {event.title}
               </h1>
             </div>
 
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="flex items-start gap-3 p-4 bg-muted/50 rounded-lg">
-                <Calendar size={24} className="text-accent flex-shrink-0 mt-1" />
+            <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
+              <div className="flex items-start gap-3 p-3 sm:p-4 bg-muted/50 rounded-lg">
+                <Calendar size={24} className="text-accent flex-shrink-0 mt-1" weight="duotone" />
                 <div>
-                  <div className="text-sm font-medium text-muted-foreground mb-1">Data e horário</div>
-                  <div className="font-medium">{formatEventDateRange(event.startDateTime, event.endDateTime)}</div>
+                  <div className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">Data e horário</div>
+                  <div className="font-medium text-sm sm:text-base">{formatEventDateRange(event.startDateTime, event.endDateTime)}</div>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 p-4 bg-muted/50 rounded-lg">
-                <MapPin size={24} className="text-accent flex-shrink-0 mt-1" />
-                <div className="min-w-0">
-                  <div className="text-sm font-medium text-muted-foreground mb-1">Local</div>
-                  <div className="font-medium">{event.locationName}</div>
+              <div className="flex items-start gap-3 p-3 sm:p-4 bg-muted/50 rounded-lg">
+                <MapPin size={24} className="text-accent flex-shrink-0 mt-1" weight="duotone" />
+                <div className="min-w-0 flex-1">
+                  <div className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">Local</div>
+                  <div className="font-medium text-sm sm:text-base break-words">{event.locationName}</div>
                   <a
                     href={mapsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-accent hover:underline mt-1 inline-block truncate w-full"
+                    className="text-xs sm:text-sm text-accent hover:underline mt-1 inline-block break-all"
                   >
                     {event.address}
                   </a>
@@ -154,21 +154,21 @@ export function EventDetailsPage() {
               </div>
             </div>
 
-            <div className="prose prose-gray max-w-none">
-              <h2 className="text-xl font-semibold mb-3">Sobre o evento</h2>
-              <div className="text-muted-foreground whitespace-pre-line leading-relaxed">
+            <div className="space-y-3">
+              <h2 className="text-lg sm:text-xl font-semibold">Sobre o evento</h2>
+              <div className="text-sm sm:text-base text-muted-foreground whitespace-pre-line leading-relaxed">
                 {event.description}
               </div>
             </div>
 
             {(event.latitude && event.longitude) && (
               <div className="space-y-3">
-                <h2 className="text-xl font-semibold">Localização</h2>
+                <h2 className="text-lg sm:text-xl font-semibold">Localização</h2>
                 <div className="relative aspect-video w-full bg-muted rounded-lg overflow-hidden border border-border">
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center space-y-3">
-                      <MapTrifold size={48} className="text-muted-foreground mx-auto" />
-                      <p className="text-sm text-muted-foreground">Mapa interativo</p>
+                    <div className="text-center space-y-3 p-4">
+                      <MapTrifold size={48} className="text-muted-foreground mx-auto" weight="duotone" />
+                      <p className="text-xs sm:text-sm text-muted-foreground">Mapa interativo</p>
                       <a
                         href={mapsUrl}
                         target="_blank"
@@ -186,9 +186,9 @@ export function EventDetailsPage() {
             )}
 
             {event.ticketUrl && !isCanceled && (
-              <div className="pt-6 border-t border-border">
+              <div className="pt-4 sm:pt-6 border-t border-border">
                 <a href={event.ticketUrl} target="_blank" rel="noopener noreferrer">
-                  <Button size="lg" className="w-full gap-3 text-base h-14">
+                  <Button size="lg" className="w-full gap-3 text-sm sm:text-base h-12 sm:h-14">
                     <Ticket size={24} />
                     Ver ingressos
                   </Button>
@@ -197,10 +197,10 @@ export function EventDetailsPage() {
             )}
             
             {!event.ticketUrl && !isCanceled && (
-              <div className="pt-6 border-t border-border">
-                <div className="flex items-center gap-3 p-4 bg-accent/10 rounded-lg">
-                  <Ticket size={24} className="text-accent" />
-                  <span className="font-medium text-accent">Entrada gratuita</span>
+              <div className="pt-4 sm:pt-6 border-t border-border">
+                <div className="flex items-center gap-3 p-3 sm:p-4 bg-accent/10 rounded-lg">
+                  <Ticket size={24} className="text-accent" weight="duotone" />
+                  <span className="font-medium text-sm sm:text-base text-accent">Entrada gratuita</span>
                 </div>
               </div>
             )}

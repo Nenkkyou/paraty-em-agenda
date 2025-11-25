@@ -1,13 +1,15 @@
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, SignOut, Calendar, Gear } from '@phosphor-icons/react'
+import { ArrowLeft, SignOut, Calendar, Gear, Moon, Sun } from '@phosphor-icons/react'
 import { useAuthStore } from '@/domain/auth/useAuthStore'
 import { cn } from '@/lib/utils'
+import { useTheme } from '@/hooks/use-theme'
 
 export function AdminLayout() {
   const navigate = useNavigate()
   const location = useLocation()
   const logout = useAuthStore((state) => state.logout)
+  const { theme, toggleTheme } = useTheme()
 
   const handleLogout = () => {
     logout()
@@ -34,10 +36,21 @@ export function AdminLayout() {
             <h1 className="text-lg font-bold">Painel Administrativo</h1>
           </div>
 
-          <Button variant="outline" size="sm" onClick={handleLogout} className="gap-2">
-            <SignOut size={18} />
-            <span className="hidden sm:inline">Sair</span>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              className="h-9 w-9"
+              aria-label={theme === 'light' ? 'Ativar tema escuro' : 'Ativar tema claro'}
+            >
+              {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleLogout} className="gap-2">
+              <SignOut size={18} />
+              <span className="hidden sm:inline">Sair</span>
+            </Button>
+          </div>
         </div>
       </header>
 

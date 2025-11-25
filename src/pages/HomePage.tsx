@@ -6,6 +6,7 @@ import { FilterChips } from '@/components/FilterChips'
 import { EventCard } from '@/components/EventCard'
 import { EventCardSkeletonGrid } from '@/components/EventCardSkeleton'
 import { EmptyState } from '@/components/EmptyState'
+import { EventCarousel } from '@/components/EventCarousel'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { MagnifyingGlass, CalendarBlank, Warning } from '@phosphor-icons/react'
@@ -78,14 +79,15 @@ export function HomePage() {
           <div className="relative max-w-2xl">
             <MagnifyingGlass
               size={20}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/60"
+              weight="bold"
             />
             <Input
               type="search"
               placeholder="Buscar por evento, local ou palavra-chave..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="pl-12 h-12 text-base bg-white/95 backdrop-blur border-white/20 focus:border-white/40"
+              className="pl-12 h-12 text-base bg-card border-border shadow-sm placeholder:text-muted-foreground placeholder:font-medium"
             />
           </div>
 
@@ -93,16 +95,16 @@ export function HomePage() {
         </div>
       </PageHeader>
 
-      <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16 py-12 space-y-16">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16 py-8 sm:py-10 md:py-12 space-y-12 sm:space-y-14 md:space-y-16">
         {isLoading ? (
           <EventCardSkeletonGrid count={8} />
         ) : (
           <>
             {filters.searchText || filters.category !== 'all' ? (
               <section>
-                <div className="flex items-center gap-3 mb-6">
-                  <MagnifyingGlass size={28} className="text-accent" />
-                  <h2 className="text-2xl md:text-3xl font-bold">
+                <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                  <MagnifyingGlass size={24} className="sm:w-7 sm:h-7 text-accent" />
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">
                     Resultados da busca
                     {filters.category !== 'all' && ` em ${filters.category}`}
                   </h2>
@@ -114,19 +116,19 @@ export function HomePage() {
                     description="Tente ajustar os filtros ou buscar por outros termos."
                   />
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  <EventCarousel>
                     {filteredEvents.map((event) => (
                       <EventCard key={event.id} event={event} />
                     ))}
-                  </div>
+                  </EventCarousel>
                 )}
               </section>
             ) : (
               <>
                 <section id="hoje">
-                  <div className="flex items-center gap-3 mb-6">
-                    <CalendarBlank size={28} className="text-accent" weight="fill" />
-                    <h2 className="text-2xl md:text-3xl font-bold">Hoje em Paraty</h2>
+                  <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                    <CalendarBlank size={24} className="sm:w-7 sm:h-7 text-accent" weight="fill" />
+                    <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">Hoje em Paraty</h2>
                   </div>
 
                   {todayEvents.length === 0 ? (
@@ -135,18 +137,18 @@ export function HomePage() {
                       description="Confira os eventos do fim de semana e próximas semanas abaixo."
                     />
                   ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <EventCarousel>
                       {todayEvents.map((event) => (
                         <EventCard key={event.id} event={event} />
                       ))}
-                    </div>
+                    </EventCarousel>
                   )}
                 </section>
 
                 <section id="fim-de-semana">
-                  <div className="flex items-center gap-3 mb-6">
-                    <CalendarBlank size={28} className="text-accent" weight="duotone" />
-                    <h2 className="text-2xl md:text-3xl font-bold">Neste fim de semana</h2>
+                  <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                    <CalendarBlank size={24} className="sm:w-7 sm:h-7 text-accent" weight="duotone" />
+                    <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">Neste fim de semana</h2>
                   </div>
 
                   {weekendEvents.length === 0 ? (
@@ -155,18 +157,18 @@ export function HomePage() {
                       description="Confira os próximos eventos abaixo."
                     />
                   ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <EventCarousel>
                       {weekendEvents.map((event) => (
                         <EventCard key={event.id} event={event} />
                       ))}
-                    </div>
+                    </EventCarousel>
                   )}
                 </section>
 
                 <section id="proximos">
-                  <div className="flex items-center gap-3 mb-6">
-                    <CalendarBlank size={28} className="text-accent" />
-                    <h2 className="text-2xl md:text-3xl font-bold">Próximas semanas</h2>
+                  <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                    <CalendarBlank size={24} className="sm:w-7 sm:h-7 text-accent" />
+                    <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">Próximas semanas</h2>
                   </div>
 
                   {upcomingEvents.length === 0 ? (
@@ -175,11 +177,11 @@ export function HomePage() {
                       description="Novos eventos serão adicionados em breve."
                     />
                   ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <EventCarousel>
                       {upcomingEvents.map((event) => (
                         <EventCard key={event.id} event={event} />
                       ))}
-                    </div>
+                    </EventCarousel>
                   )}
                 </section>
               </>

@@ -100,8 +100,8 @@ Typography should feel modern and highly legible while maintaining warmth - sans
 
 Animations should feel like gentle ocean waves - present but never overwhelming, guiding attention without demanding it. Motion reinforces the feeling that this is a living, breathing event ecosystem.
 
-- **Purposeful Meaning**: Smooth transitions between page navigations (300ms) suggest seamless exploration; hover states on cards (150ms scale+shadow) invite interaction; filter chips animate their active state to confirm selection
-- **Hierarchy of Movement**: Hero gradient subtly shifts on scroll (parallax lite); event cards have the most animation on hover (lift effect); form fields get subtle focus animations; page transitions are gentle fades
+- **Purposeful Meaning**: Smooth transitions between page navigations (300ms) suggest seamless exploration; hover states on cards (150ms scale+shadow) invite interaction; filter chips animate their active state to confirm selection; carousel transitions are smooth and natural with momentum scrolling
+- **Hierarchy of Movement**: Hero gradient subtly shifts on scroll (parallax lite); event cards have the most animation on hover (lift effect); form fields get subtle focus animations; page transitions are gentle fades; carousel navigation buttons appear on hover on desktop
 
 ## Component Selection
 
@@ -117,18 +117,22 @@ Animations should feel like gentle ocean waves - present but never overwhelming,
   - `Tabs` for future category navigation in admin
   - `Skeleton` for loading states matching card dimensions
   - `Toast` (sonner) for success/error feedback
+  - `Carousel` (embla-carousel-react) for event browsing with touch/swipe support
   
 - **Customizations**: 
-  - Custom `EventCard` component with image aspect ratio 16:9, gradient overlay on hover, featured badge positioning
-  - Custom `FilterChips` with icon + label, active state with filled background
-  - Custom `PageHeader` with gradient background support
-  - Custom `EmptyState` with illustration placeholder and encouraging copy
+  - Custom `EventCard` component with image aspect ratio 16:9, gradient overlay on hover, featured badge positioning, fully responsive from mobile to desktop
+  - Custom `EventCarousel` component with navigation arrows (desktop) and dots/buttons (mobile), smooth momentum scrolling
+  - Custom `FilterChips` with icon + label, active state with filled background, responsive sizing
+  - Custom `PageHeader` with gradient background support, fully responsive typography
+  - Custom `EmptyState` with illustration placeholder and encouraging copy, responsive sizing
   - Custom `MapPlaceholder` component for event details (prepared for future Google Maps integration)
+  - Dark mode toggle button in all layouts (public and admin)
   
 - **States**: 
   - Buttons: default (solid), hover (lift + shadow), active (pressed down), disabled (opacity 40%), loading (spinner + disabled)
-  - Inputs: default (border-input), focus (border-accent + ring), error (border-destructive + error message), disabled (bg-muted)
-  - Cards: default (white), hover (shadow-lg + scale 102%), pressed (scale 100%), featured (accent border)
+  - Inputs: default (border-input), focus (border-accent + ring), error (border-destructive + error message), disabled (bg-muted), improved placeholder contrast
+  - Cards: default (white/card), hover (shadow-lg + scale 102%), pressed (scale 100%), featured (accent border), dark mode support
+  - Theme Toggle: light/dark mode with smooth transitions, persists in localStorage
   
 - **Icon Selection**: 
   - `MagnifyingGlass` for search
@@ -142,18 +146,24 @@ Animations should feel like gentle ocean waves - present but never overwhelming,
   - `Eye` / `EyeSlash` for publish/unpublish
   - `Plus` for create new
   - `ArrowLeft` for back navigation
+  - `Moon` / `Sun` for theme toggle
+  - `CaretLeft` / `CaretRight` for carousel navigation
   
 - **Spacing**: 
   - Page padding: `px-4 md:px-8 lg:px-16`
-  - Section gaps: `space-y-12 md:space-y-16`
-  - Card grid: `gap-6 md:gap-8`
+  - Section gaps: `space-y-12 sm:space-y-14 md:space-y-16`
+  - Card grid (carousel): `gap-6` with responsive flex-basis
   - Form fields: `space-y-4`
   - Inline elements: `gap-2`
+  - Carousel navigation: positioned absolutely on desktop, inline buttons on mobile
   
 - **Mobile**: 
   - Header collapses to hamburger menu at 768px with slide-in drawer
-  - Event grid: 1 column mobile, 2 at 640px, 3 at 1024px, 4 at 1440px
+  - Event display: carousel on all breakpoints with 1 slide on mobile, 2 at 640px, 3 at 1024px, 4 at 1440px
   - Admin table switches to card view on mobile with key info only
   - Form preview moves below form fields on mobile (stacked layout)
   - Touch targets minimum 44px, increased padding on interactive elements
   - Bottom navigation bar for key actions on mobile admin panel
+  - Carousel: swipe gestures on touch devices, momentum scrolling
+  - Theme toggle accessible in mobile menu
+  - All typography scales down appropriately for small screens

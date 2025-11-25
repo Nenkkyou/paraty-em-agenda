@@ -1,12 +1,14 @@
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { UserCircle, List, X } from '@phosphor-icons/react'
+import { UserCircle, List, X, Moon, Sun } from '@phosphor-icons/react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
+import { useTheme } from '@/hooks/use-theme'
 
 export function PublicLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const location = useLocation()
+  const { theme, toggleTheme } = useTheme()
 
   const navLinks = [
     { label: 'Hoje', href: '/', hash: '#hoje' },
@@ -28,7 +30,7 @@ export function PublicLayout() {
               </div>
             </Link>
 
-            <nav className="hidden md:flex items-center gap-6">
+            <nav className="hidden md:flex items-center gap-4">
               {navLinks.map((link) => (
                 <a
                   key={link.label}
@@ -41,6 +43,15 @@ export function PublicLayout() {
                   {link.label}
                 </a>
               ))}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleTheme}
+                className="h-9 w-9"
+                aria-label={theme === 'light' ? 'Ativar tema escuro' : 'Ativar tema claro'}
+              >
+                {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+              </Button>
               <Link to="/admin/login">
                 <Button variant="outline" size="sm" className="gap-2">
                   <UserCircle size={18} />
@@ -50,9 +61,10 @@ export function PublicLayout() {
             </nav>
 
             <button
-              className="md:hidden p-2 hover:bg-muted rounded-lg transition-colors"
+              className="md:hidden p-2 hover:bg-muted rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Menu"
+              aria-label={mobileMenuOpen ? 'Fechar menu' : 'Abrir menu'}
+              aria-expanded={mobileMenuOpen}
             >
               {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
             </button>
@@ -77,6 +89,15 @@ export function PublicLayout() {
                   {link.label}
                 </a>
               ))}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={toggleTheme}
+                className="w-full gap-2 justify-start"
+              >
+                {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+                {theme === 'light' ? 'Tema escuro' : 'Tema claro'}
+              </Button>
               <Link to="/admin/login" onClick={() => setMobileMenuOpen(false)}>
                 <Button variant="outline" size="sm" className="w-full gap-2">
                   <UserCircle size={18} />
@@ -92,18 +113,18 @@ export function PublicLayout() {
         <Outlet />
       </main>
 
-      <footer className="bg-card border-t border-border mt-20">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <footer className="bg-card border-t border-border mt-12 sm:mt-16 md:mt-20">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16 py-8 sm:py-10 md:py-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
             <div>
-              <h3 className="font-bold text-lg mb-4">Paraty em Agenda</h3>
-              <p className="text-sm text-muted-foreground">
+              <h3 className="font-bold text-base sm:text-lg mb-3 sm:mb-4">Paraty em Agenda</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 Todos os eventos de Paraty em um só lugar. Conectando moradores, turistas e organizadores.
               </p>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Links rápidos</h4>
-              <ul className="space-y-2 text-sm">
+              <h4 className="font-semibold text-sm sm:text-base mb-3 sm:mb-4">Links rápidos</h4>
+              <ul className="space-y-2 text-xs sm:text-sm">
                 <li>
                   <a href="#hoje" className="text-muted-foreground hover:text-accent transition-colors">
                     Eventos hoje
@@ -122,13 +143,13 @@ export function PublicLayout() {
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Sobre</h4>
-              <p className="text-sm text-muted-foreground">
+              <h4 className="font-semibold text-sm sm:text-base mb-3 sm:mb-4">Sobre</h4>
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 Portal de eventos de Paraty - RJ
               </p>
             </div>
           </div>
-          <div className="mt-8 pt-8 border-t border-border text-center text-sm text-muted-foreground">
+          <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-border text-center text-xs sm:text-sm text-muted-foreground">
             © {new Date().getFullYear()} Paraty em Agenda. Todos os direitos reservados.
           </div>
         </div>
