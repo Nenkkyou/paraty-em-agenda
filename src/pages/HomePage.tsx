@@ -76,7 +76,6 @@ export function HomePage() {
       <PageHeader
         title="Descubra Paraty"
         description="Todos os eventos da cidade em um só lugar. Música, gastronomia, cultura e natureza."
-        gradient
       >
         <div className="flex flex-col items-center space-y-6 mt-8">
           {/* Campo de busca centralizado */}
