@@ -1,14 +1,16 @@
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { UserCircle, List, X, Moon, Sun } from '@phosphor-icons/react'
+import { UserCircle, List, X, Moon, Sun, Ticket } from '@phosphor-icons/react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { useTheme } from '@/hooks/use-theme'
+import { useEventsStore } from '@/domain/events/useEventsStore'
 
 export function PublicLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const location = useLocation()
   const { theme, toggleTheme } = useTheme()
+  const { showOnlyWithTickets, setShowOnlyWithTickets, resetFilters } = useEventsStore()
 
   const navLinks = [
     { label: 'Hoje', href: '/', hash: '#hoje' },
@@ -17,6 +19,17 @@ export function PublicLayout() {
   ]
 
   const isActive = (href: string) => location.pathname === href
+
+  const handleTicketsClick = () => {
+    if (showOnlyWithTickets) {
+      resetFilters()
+    } else {
+      setShowOnlyWithTickets(true)
+    }
+    
+    // Scroll para o topo da página
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -58,6 +71,15 @@ export function PublicLayout() {
                   Sou organizador
                 </Button>
               </Link>
+              <Button
+                variant={showOnlyWithTickets ? "default" : "outline"}
+                size="sm"
+                onClick={handleTicketsClick}
+                className="gap-2"
+              >
+                <Ticket size={18} />
+                Comprar Ingressos
+              </Button>
             </nav>
 
             <button
@@ -104,6 +126,18 @@ export function PublicLayout() {
                   Sou organizador
                 </Button>
               </Link>
+              <Button
+                variant={showOnlyWithTickets ? "default" : "outline"}
+                size="sm"
+                onClick={() => {
+                  handleTicketsClick()
+                  setMobileMenuOpen(false)
+                }}
+                className="w-full gap-2 justify-start"
+              >
+                <Ticket size={18} />
+                Comprar Ingressos
+              </Button>
             </nav>
           </div>
         )}

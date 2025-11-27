@@ -2,6 +2,14 @@ export type EventStatus = 'draft' | 'scheduled' | 'published' | 'canceled'
 
 export type EventCategory = 'musica' | 'gastronomia' | 'cultura' | 'natureza' | 'infantil'
 
+export type TicketType = 'single' | 'multiple'
+
+export interface TicketPrice {
+  type: 'inteira' | 'meia' | 'infantil' | 'single'
+  price: number
+  description?: string
+}
+
 export interface Event {
   id: string
   slug: string
@@ -17,6 +25,9 @@ export interface Event {
   imageUrl: string
   isFeatured: boolean
   ticketUrl?: string
+  hasOnlineTickets?: boolean
+  ticketType?: TicketType
+  ticketPrices?: TicketPrice[]
   createdAt: string
   updatedAt: string
   status: EventStatus

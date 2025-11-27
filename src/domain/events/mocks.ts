@@ -15,7 +15,14 @@ export const mockEvents: Event[] = [
     longitude: -44.7169,
     imageUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&h=600&fit=crop',
     isFeatured: true,
-    ticketUrl: 'https://www.sympla.com.br/evento/festival-jazz-paraty',
+    ticketUrl: undefined,
+    hasOnlineTickets: true,
+    ticketType: 'multiple',
+    ticketPrices: [
+      { type: 'inteira', price: 120, description: 'Acesso completo ao evento' },
+      { type: 'meia', price: 60, description: 'Estudantes, idosos e pessoas com deficiência' },
+      { type: 'infantil', price: 30, description: 'Crianças de 6 a 12 anos' }
+    ],
     createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
     updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
     status: 'published'
@@ -69,7 +76,12 @@ export const mockEvents: Event[] = [
     longitude: -44.7180,
     imageUrl: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=800&h=600&fit=crop',
     isFeatured: false,
-    ticketUrl: 'https://www.sympla.com.br/trilha-pico-papagaio',
+    ticketUrl: undefined,
+    hasOnlineTickets: true,
+    ticketType: 'single',
+    ticketPrices: [
+      { type: 'single', price: 45, description: 'Acesso à trilha guiada' }
+    ],
     createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
     updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
     status: 'published'
@@ -86,7 +98,13 @@ export const mockEvents: Event[] = [
     address: 'Rua da Cadeia, 43 - Centro Histórico, Paraty - RJ',
     imageUrl: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800&h=600&fit=crop',
     isFeatured: false,
-    ticketUrl: 'https://www.eventbrite.com.br/oficina-arte-criancas',
+    ticketUrl: undefined,
+    hasOnlineTickets: true,
+    ticketType: 'multiple',
+    ticketPrices: [
+      { type: 'inteira', price: 25, description: 'Acesso completo à oficina' },
+      { type: 'infantil', price: 15, description: 'Crianças de 5 a 12 anos' }
+    ],
     createdAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
     updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
     status: 'published'
@@ -119,7 +137,14 @@ export const mockEvents: Event[] = [
     address: 'Rua Dona Geralda, 327 - Centro Histórico, Paraty - RJ',
     imageUrl: 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=800&h=600&fit=crop',
     isFeatured: true,
-    ticketUrl: 'https://www.sympla.com.br/pecas-historias-paraty',
+    ticketUrl: undefined,
+    hasOnlineTickets: true,
+    ticketType: 'multiple',
+    ticketPrices: [
+      { type: 'inteira', price: 40, description: 'Acesso completo ao espetáculo' },
+      { type: 'meia', price: 20, description: 'Estudantes, idosos e pessoas com deficiência' },
+      { type: 'infantil', price: 15, description: 'Crianças de 6 a 12 anos' }
+    ],
     createdAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
     updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
     status: 'scheduled'
@@ -138,7 +163,14 @@ export const mockEvents: Event[] = [
     longitude: -44.7142,
     imageUrl: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=600&fit=crop',
     isFeatured: false,
-    ticketUrl: 'https://www.sympla.com.br/passeio-barco-ilhas',
+    ticketUrl: undefined,
+    hasOnlineTickets: true,
+    ticketType: 'multiple',
+    ticketPrices: [
+      { type: 'inteira', price: 85, description: 'Passeio completo com almoço' },
+      { type: 'meia', price: 42.50, description: 'Estudantes e idosos' },
+      { type: 'infantil', price: 30, description: 'Crianças de 6 a 12 anos' }
+    ],
     createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
     updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
     status: 'published'

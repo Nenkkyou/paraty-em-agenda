@@ -9,7 +9,7 @@ import { EmptyState } from '@/components/EmptyState'
 import { EventCarousel } from '@/components/EventCarousel'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { MagnifyingGlass, CalendarBlank, Warning } from '@phosphor-icons/react'
+import { MagnifyingGlass, CalendarBlank, Warning, Ticket } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
 export function HomePage() {
@@ -20,9 +20,11 @@ export function HomePage() {
     getTodayEvents,
     getWeekendEvents,
     getUpcomingEvents,
+    getEventsWithTickets,
     filters,
     setFilters,
-    getFilteredEvents
+    getFilteredEvents,
+    showOnlyWithTickets
   } = useEventsStore()
 
   const [searchInput, setSearchInput] = useState('')
@@ -42,6 +44,7 @@ export function HomePage() {
   const weekendEvents = getWeekendEvents()
   const upcomingEvents = getUpcomingEvents()
   const filteredEvents = getFilteredEvents()
+  const eventsWithTickets = getEventsWithTickets()
 
   const handleCategorySelect = (category: EventCategory | 'all') => {
     setFilters({ category })
@@ -75,11 +78,12 @@ export function HomePage() {
         description="Todos os eventos da cidade em um só lugar. Música, gastronomia, cultura e natureza."
         gradient
       >
-        <div className="space-y-4 mt-8">
-          <div className="relative max-w-2xl">
+        <div className="flex flex-col items-center space-y-6 mt-8">
+          {/* Campo de busca centralizado */}
+          <div className="relative w-full max-w-2xl">
             <MagnifyingGlass
               size={20}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/60"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70"
               weight="bold"
             />
             <Input
@@ -87,11 +91,14 @@ export function HomePage() {
               placeholder="Buscar por evento, local ou palavra-chave..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="pl-12 h-12 text-base bg-card border-border shadow-sm placeholder:text-muted-foreground placeholder:font-medium"
+              className="pl-12 h-14 text-base bg-card/95 backdrop-blur-sm border-white/20 shadow-lg placeholder:text-white/70 placeholder:font-medium rounded-xl focus:ring-2 focus:ring-white/30 text-white"
             />
           </div>
 
-          <FilterChips selected={filters.category} onSelect={handleCategorySelect} />
+          {/* Chips de filtro centralizados */}
+          <div className="w-full flex justify-center">
+            <FilterChips selected={filters.category} onSelect={handleCategorySelect} className="justify-center" />
+          </div>
         </div>
       </PageHeader>
 
@@ -100,24 +107,35 @@ export function HomePage() {
           <EventCardSkeletonGrid count={8} />
         ) : (
           <>
-            {filters.searchText || filters.category !== 'all' ? (
+            {filters.searchText || filters.category !== 'all' || showOnlyWithTickets ? (
               <section>
                 <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-                  <MagnifyingGlass size={24} className="sm:w-7 sm:h-7 text-accent" />
-                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">
-                    Resultados da busca
-                    {filters.category !== 'all' && ` em ${filters.category}`}
-                  </h2>
+                  {showOnlyWithTickets ? (
+                    <>
+                      <Ticket size={24} className="sm:w-7 sm:h-7 text-accent" />
+                      <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">
+                        Eventos com Ingressos Disponíveis
+                      </h2>
+                    </>
+                  ) : (
+                    <>
+                      <MagnifyingGlass size={24} className="sm:w-7 sm:h-7 text-accent" />
+                      <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">
+                        Resultados da busca
+                        {filters.category !== 'all' && ` em ${filters.category}`}
+                      </h2>
+                    </>
+                  )}
                 </div>
 
-                {filteredEvents.length === 0 ? (
+                {(showOnlyWithTickets ? eventsWithTickets : filteredEvents).length === 0 ? (
                   <EmptyState
-                    title="Nenhum evento encontrado"
-                    description="Tente ajustar os filtros ou buscar por outros termos."
+                    title={showOnlyWithTickets ? "Nenhum evento com ingressos disponíveis" : "Nenhum evento encontrado"}
+                    description={showOnlyWithTickets ? "Não há eventos com ingressos disponíveis no momento." : "Tente ajustar os filtros ou buscar por outros termos."}
                   />
                 ) : (
                   <EventCarousel>
-                    {filteredEvents.map((event) => (
+                    {(showOnlyWithTickets ? eventsWithTickets : filteredEvents).map((event) => (
                       <EventCard key={event.id} event={event} />
                     ))}
                   </EventCarousel>

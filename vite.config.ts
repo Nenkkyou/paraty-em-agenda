@@ -16,6 +16,16 @@ export default defineConfig({
     // DO NOT REMOVE
     createIconImportProxy() as PluginOption,
     sparkPlugin() as PluginOption,
+    // Custom plugin to handle _spark/loaded requests
+    {
+      name: 'spark-handler',
+      configureServer(server) {
+        server.middlewares.use('/_spark/loaded', (req, res, next) => {
+          res.writeHead(200, { 'Content-Type': 'application/javascript' });
+          res.end('// Spark loaded successfully');
+        });
+      },
+    },
   ],
   resolve: {
     alias: {
