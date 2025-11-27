@@ -1,6 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useEventsStore } from '@/domain/events/useEventsStore'
+import { PaymentModal } from '@/components/PaymentModal'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/EmptyState'
@@ -20,6 +21,7 @@ import { cn } from '@/lib/utils'
 export function EventDetailsPage() {
   const { slug } = useParams<{ slug: string }>()
   const { getEventBySlug, loadEvents, isLoading } = useEventsStore()
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
 
   useEffect(() => {
     loadEvents()
@@ -65,6 +67,7 @@ export function EventDetailsPage() {
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.address)}`
 
   return (
+    <>
     <div className="min-h-screen bg-background pb-8">
       <div className="max-w-5xl mx-auto px-4 md:px-8 py-6 md:py-8">
         <Link to="/">
@@ -185,18 +188,29 @@ export function EventDetailsPage() {
               </div>
             )}
 
-            {event.ticketUrl && !isCanceled && (
+            {(event.hasOnlineTickets || event.ticketUrl) && !isCanceled && (
               <div className="pt-4 sm:pt-6 border-t border-border">
-                <a href={event.ticketUrl} target="_blank" rel="noopener noreferrer">
-                  <Button size="lg" className="w-full gap-3 text-sm sm:text-base h-12 sm:h-14">
+                {event.hasOnlineTickets ? (
+                  <Button 
+                    size="lg" 
+                    className="w-full gap-3 text-sm sm:text-base h-12 sm:h-14"
+                    onClick={() => setIsPaymentModalOpen(true)}
+                  >
                     <Ticket size={24} />
-                    Ver ingressos
+                    Comprar ingresso para este evento
                   </Button>
-                </a>
+                ) : (
+                  <a href={event.ticketUrl} target="_blank" rel="noopener noreferrer">
+                    <Button size="lg" className="w-full gap-3 text-sm sm:text-base h-12 sm:h-14">
+                      <Ticket size={24} />
+                      Ver ingressos
+                    </Button>
+                  </a>
+                )}
               </div>
             )}
             
-            {!event.ticketUrl && !isCanceled && (
+            {!event.hasOnlineTickets && !event.ticketUrl && !isCanceled && (
               <div className="pt-4 sm:pt-6 border-t border-border">
                 <div className="flex items-center gap-3 p-3 sm:p-4 bg-accent/10 rounded-lg">
                   <Ticket size={24} className="text-accent" weight="duotone" />
@@ -208,5 +222,15 @@ export function EventDetailsPage() {
         </div>
       </div>
     </div>
+    
+    {/* Modal de Pagamento */}
+    {event && (
+      <PaymentModal 
+        event={event}
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+      />
+    )}
+    </>
   )
 }

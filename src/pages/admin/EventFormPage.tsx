@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useEventsStore } from '@/domain/events/useEventsStore'
-import { Event, EventCategory, EventStatus } from '@/domain/events/types'
+import { Event, EventCategory, EventStatus, TicketType, TicketPrice } from '@/domain/events/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Select,
   SelectContent,
@@ -42,6 +43,12 @@ const eventFormSchema = z.object({
   longitude: z.string().optional(),
   imageUrl: z.string().url('URL da imagem inválida'),
   ticketUrl: z.string().url('URL de ingresso inválida').optional().or(z.literal('')),
+  hasOnlineTickets: z.boolean(),
+  ticketType: z.enum(['single', 'multiple']).optional(),
+  singleTicketPrice: z.string().optional(),
+  inteiraPrice: z.string().optional(),
+  meiaPrice: z.string().optional(),
+  infantilPrice: z.string().optional(),
   isFeatured: z.boolean(),
   status: z.enum(['draft', 'scheduled', 'published', 'canceled'])
 }).refine(
@@ -53,6 +60,20 @@ const eventFormSchema = z.object({
   {
     message: 'A data final deve ser posterior à data inicial',
     path: ['endDateTime']
+  }
+).refine(
+  (data) => {
+    if (data.hasOnlineTickets && data.ticketType === 'single') {
+      return data.singleTicketPrice && parseFloat(data.singleTicketPrice) > 0
+    }
+    if (data.hasOnlineTickets && data.ticketType === 'multiple') {
+      return data.inteiraPrice && parseFloat(data.inteiraPrice) > 0
+    }
+    return true
+  },
+  {
+    message: 'Preços dos ingressos são obrigatórios quando a venda online está habilitada',
+    path: ['singleTicketPrice']
   }
 )
 
@@ -67,6 +88,8 @@ export function EventFormPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showDiscardDialog, setShowDiscardDialog] = useState(false)
   const [hasChanges, setHasChanges] = useState(false)
+  const [hasOnlineTickets, setHasOnlineTickets] = useState(false)
+  const [ticketType, setTicketType] = useState<TicketType>('single')
 
   const isEditing = !!id
   const existingEvent = isEditing ? events.find((e) => e.id === id) : undefined
@@ -95,8 +118,7 @@ export function EventFormPage() {
           ticketUrl: existingEvent.ticketUrl || '',
           isFeatured: existingEvent.isFeatured,
           status: existingEvent.status
-        }
-      : {
+        }      : {
           title: '',
           description: '',
           category: 'musica',
@@ -108,6 +130,12 @@ export function EventFormPage() {
           longitude: '',
           imageUrl: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&h=600&fit=crop',
           ticketUrl: '',
+          hasOnlineTickets: false,
+          ticketType: 'single',
+          singleTicketPrice: '',
+          inteiraPrice: '',
+          meiaPrice: '',
+          infantilPrice: '',
           isFeatured: false,
           status: 'draft'
         }
@@ -120,6 +148,18 @@ export function EventFormPage() {
   useEffect(() => {
     setHasChanges(isDirty)
   }, [isDirty])
+
+  // Sincronizar estado dos ingressos com o formulário
+  const watchedTickets = watch(['hasOnlineTickets', 'ticketType'])
+  
+  useEffect(() => {
+    if (watchedTickets[0] !== undefined) {
+      setHasOnlineTickets(watchedTickets[0])
+    }
+    if (watchedTickets[1]) {
+      setTicketType(watchedTickets[1])
+    }
+  }, [watchedTickets])
 
   const watchedValues = watch()
 
@@ -137,6 +177,13 @@ export function EventFormPage() {
     longitude: watchedValues.longitude ? parseFloat(watchedValues.longitude) : undefined,
     imageUrl: watchedValues.imageUrl || 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&h=600&fit=crop',
     ticketUrl: watchedValues.ticketUrl || undefined,
+    hasOnlineTickets: watchedValues.hasOnlineTickets,
+    ticketType: watchedValues.ticketType,
+    ticketPrices: watchedValues.hasOnlineTickets ? [
+      watchedValues.ticketType === 'single' 
+        ? { type: 'single', price: parseFloat(watchedValues.singleTicketPrice || '0') }
+        : { type: 'inteira', price: parseFloat(watchedValues.inteiraPrice || '0') }
+    ] : undefined,
     isFeatured: watchedValues.isFeatured,
     status: watchedValues.status,
     createdAt: new Date().toISOString(),
@@ -147,6 +194,39 @@ export function EventFormPage() {
     setIsSubmitting(true)
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000))
+
+      const ticketPrices: TicketPrice[] = []
+      
+      if (data.hasOnlineTickets) {
+        if (data.ticketType === 'single' && data.singleTicketPrice) {
+          ticketPrices.push({
+            type: 'single',
+            price: parseFloat(data.singleTicketPrice)
+          })
+        } else if (data.ticketType === 'multiple') {
+          if (data.inteiraPrice) {
+            ticketPrices.push({
+              type: 'inteira',
+              price: parseFloat(data.inteiraPrice),
+              description: 'Acesso completo ao evento'
+            })
+          }
+          if (data.meiaPrice) {
+            ticketPrices.push({
+              type: 'meia',
+              price: parseFloat(data.meiaPrice),
+              description: 'Estudantes, idosos e pessoas com deficiência'
+            })
+          }
+          if (data.infantilPrice) {
+            ticketPrices.push({
+              type: 'infantil',
+              price: parseFloat(data.infantilPrice),
+              description: 'Crianças de 6 a 12 anos'
+            })
+          }
+        }
+      }
 
       const eventData: Event = {
         id: id || Date.now().toString(),
@@ -161,7 +241,10 @@ export function EventFormPage() {
         latitude: data.latitude ? parseFloat(data.latitude) : undefined,
         longitude: data.longitude ? parseFloat(data.longitude) : undefined,
         imageUrl: data.imageUrl,
-        ticketUrl: data.ticketUrl || undefined,
+        ticketUrl: data.hasOnlineTickets ? undefined : (data.ticketUrl || undefined),
+        hasOnlineTickets: data.hasOnlineTickets,
+        ticketType: data.hasOnlineTickets ? data.ticketType : undefined,
+        ticketPrices: ticketPrices.length > 0 ? ticketPrices : undefined,
         isFeatured: data.isFeatured,
         status: saveStatus,
         createdAt: existingEvent?.createdAt || new Date().toISOString(),
@@ -367,20 +450,158 @@ export function EventFormPage() {
             </div>
 
             <div className="bg-card p-6 rounded-lg border border-border space-y-6">
-              <h2 className="text-xl font-semibold">Configurações adicionais</h2>
+              <h2 className="text-xl font-semibold">Venda de ingressos</h2>
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label htmlFor="hasOnlineTickets">Venda de ingressos pelo site</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Ative para vender ingressos diretamente pelo site
+                  </p>
+                </div>
+                <Controller
+                  name="hasOnlineTickets"
+                  control={control}
+                  render={({ field }) => (
+                    <Switch
+                      id="hasOnlineTickets"
+                      checked={field.value}
+                      onCheckedChange={(checked) => {
+                        field.onChange(checked)
+                        setHasOnlineTickets(checked)
+                      }}
+                    />
+                  )}
+                />
+              </div>
+
+              {hasOnlineTickets && (
+                <div className="space-y-6 pt-4 border-t border-border">
+                  <div className="space-y-4">
+                    <Label className="text-base font-medium">Tipo de ingresso</Label>
+                    <div className="space-y-3">
+                      <Controller
+                        name="ticketType"
+                        control={control}
+                        render={({ field }) => (
+                          <>
+                            <div className="flex items-center space-x-2">
+                              <input
+                                type="radio"
+                                id="single"
+                                value="single"
+                                checked={field.value === 'single'}
+                                onChange={(e) => {
+                                  field.onChange(e.target.value)
+                                  setTicketType('single')
+                                }}
+                                className="w-4 h-4"
+                              />
+                              <Label htmlFor="single" className="font-normal">
+                                Valor único
+                              </Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <input
+                                type="radio"
+                                id="multiple"
+                                value="multiple"
+                                checked={field.value === 'multiple'}
+                                onChange={(e) => {
+                                  field.onChange(e.target.value)
+                                  setTicketType('multiple')
+                                }}
+                                className="w-4 h-4"
+                              />
+                              <Label htmlFor="multiple" className="font-normal">
+                                Padrão (Inteira, Meia, Infantil)
+                              </Label>
+                            </div>
+                          </>
+                        )}
+                      />
+                    </div>
+                  </div>
+
+                  {ticketType === 'single' && (
+                    <div className="space-y-2">
+                      <Label htmlFor="singleTicketPrice">Preço do ingresso (R$) *</Label>
+                      <Input
+                        id="singleTicketPrice"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        placeholder="0,00"
+                        {...register('singleTicketPrice')}
+                      />
+                      {errors.singleTicketPrice && (
+                        <p className="text-sm text-destructive">{errors.singleTicketPrice.message}</p>
+                      )}
+                    </div>
+                  )}
+
+                  {ticketType === 'multiple' && (
+                    <div className="grid sm:grid-cols-3 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="inteiraPrice">Inteira (R$) *</Label>
+                        <Input
+                          id="inteiraPrice"
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          placeholder="0,00"
+                          {...register('inteiraPrice')}
+                        />
+                        {errors.inteiraPrice && (
+                          <p className="text-sm text-destructive">{errors.inteiraPrice.message}</p>
+                        )}
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="meiaPrice">Meia Entrada (R$)</Label>
+                        <Input
+                          id="meiaPrice"
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          placeholder="0,00"
+                          {...register('meiaPrice')}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="infantilPrice">Infantil (R$)</Label>
+                        <Input
+                          id="infantilPrice"
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          placeholder="0,00"
+                          {...register('infantilPrice')}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className="space-y-2">
-                <Label htmlFor="ticketUrl">URL de ingressos (opcional)</Label>
+                <Label htmlFor="ticketUrl">URL de ingressos externa (opcional)</Label>
                 <Input
                   id="ticketUrl"
                   type="url"
                   placeholder="https://sympla.com.br/seu-evento"
                   {...register('ticketUrl')}
                 />
+                <p className="text-xs text-muted-foreground">
+                  Use apenas se não estiver vendendo pelo site
+                </p>
                 {errors.ticketUrl && (
                   <p className="text-sm text-destructive">{errors.ticketUrl.message}</p>
                 )}
               </div>
+            </div>
+
+            <div className="bg-card p-6 rounded-lg border border-border space-y-6">
+              <h2 className="text-xl font-semibold">Configurações adicionais</h2>
 
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">

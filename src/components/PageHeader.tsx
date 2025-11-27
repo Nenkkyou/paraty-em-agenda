@@ -12,16 +12,16 @@ export function PageHeader({ title, description, gradient = false, children, cla
   return (
     <div
       className={cn(
-        'relative py-8 sm:py-10 md:py-12 px-4 md:px-8 lg:px-16',
+        'relative py-12 sm:py-16 md:py-20 px-4 md:px-8 lg:px-16',
         gradient && 'bg-gradient-to-br from-primary via-accent to-secondary',
         className
       )}
     >
       <div className="max-w-7xl mx-auto">
-        <div className="space-y-3 sm:space-y-4">
+        <div className="text-center space-y-4 sm:space-y-6">
           <h1
             className={cn(
-              'text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight tracking-tight',
+              'text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight',
               gradient ? 'text-white' : 'text-foreground'
             )}
           >
@@ -30,7 +30,7 @@ export function PageHeader({ title, description, gradient = false, children, cla
           {description && (
             <p
               className={cn(
-                'text-base sm:text-lg md:text-xl max-w-3xl',
+                'text-lg sm:text-xl md:text-2xl max-w-4xl mx-auto leading-relaxed',
                 gradient ? 'text-white/90' : 'text-muted-foreground'
               )}
             >
@@ -38,7 +38,7 @@ export function PageHeader({ title, description, gradient = false, children, cla
             </p>
           )}
         </div>
-        {children && <div className="mt-4 sm:mt-6">{children}</div>}
+        {children && <div className="mt-8 sm:mt-10">{children}</div>}
       </div>
     </div>
   )

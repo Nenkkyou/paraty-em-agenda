@@ -7,6 +7,7 @@ interface EventsState {
   filters: EventFilters
   isLoading: boolean
   error: string | null
+  showOnlyWithTickets: boolean
   
   setFilters: (filters: Partial<EventFilters>) => void
   resetFilters: () => void
@@ -14,6 +15,8 @@ interface EventsState {
   getTodayEvents: () => Event[]
   getWeekendEvents: () => Event[]
   getUpcomingEvents: () => Event[]
+  getEventsWithTickets: () => Event[]
+  setShowOnlyWithTickets: (show: boolean) => void
   getEventBySlug: (slug: string) => Event | undefined
   addEvent: (event: Event) => void
   updateEvent: (id: string, updates: Partial<Event>) => void
@@ -64,6 +67,7 @@ export const useEventsStore = create<EventsState>((set, get) => ({
   filters: defaultFilters,
   isLoading: false,
   error: null,
+  showOnlyWithTickets: false,
 
   setFilters: (newFilters) => {
     set((state) => ({
@@ -72,12 +76,20 @@ export const useEventsStore = create<EventsState>((set, get) => ({
   },
 
   resetFilters: () => {
-    set({ filters: defaultFilters })
+    set({ filters: defaultFilters, showOnlyWithTickets: false })
+  },
+
+  setShowOnlyWithTickets: (show) => {
+    set({ showOnlyWithTickets: show })
   },
 
   getFilteredEvents: () => {
-    const { events, filters } = get()
+    const { events, filters, showOnlyWithTickets } = get()
     let filtered = events.filter(event => event.status === 'published')
+
+    if (showOnlyWithTickets) {
+      filtered = filtered.filter(event => event.ticketUrl || event.hasOnlineTickets)
+    }
 
     if (filters.searchText) {
       const search = filters.searchText.toLowerCase()
@@ -139,6 +151,15 @@ export const useEventsStore = create<EventsState>((set, get) => ({
         new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime()
       )
       .slice(0, 12)
+  },
+
+  getEventsWithTickets: () => {
+    const { events } = get()
+    return events
+      .filter((event) => event.status === 'published' && (event.ticketUrl || event.hasOnlineTickets))
+      .sort((a, b) => 
+        new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime()
+      )
   },
 
   getEventBySlug: (slug) => {
