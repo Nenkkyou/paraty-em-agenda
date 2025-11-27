@@ -161,7 +161,7 @@ export const mockEvents: Event[] = [
     address: 'Av. Roberto Silveira, s/n - Centro, Paraty - RJ',
     latitude: -23.2185,
     longitude: -44.7142,
-    imageUrl: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=600&fit=crop',
+    imageUrl: 'https://a.travel-assets.com/findyours-php/viewfinder/images/res70/263000/263128-Paraty-Wharf.jpg',
     isFeatured: false,
     ticketUrl: undefined,
     hasOnlineTickets: true,
