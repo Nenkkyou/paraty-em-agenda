@@ -8,7 +8,7 @@ interface FilterChipsProps {
   className?: string
 }
 
-const categories: (EventCategory | 'all')[] = ['all', 'musica', 'gastronomia', 'cultura', 'natureza', 'infantil']
+const categories: (EventCategory | 'all')[] = ['all', 'musica', 'gastronomia', 'cultura', 'natureza', 'infantil', 'hospedagens']
 
 export function FilterChips({ selected, onSelect, className }: FilterChipsProps) {
   return (

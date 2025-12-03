@@ -1,6 +1,6 @@
 export type EventStatus = 'draft' | 'scheduled' | 'published' | 'canceled'
 
-export type EventCategory = 'musica' | 'gastronomia' | 'cultura' | 'natureza' | 'infantil'
+export type EventCategory = 'musica' | 'gastronomia' | 'cultura' | 'natureza' | 'infantil' | 'hospedagens'
 
 export type TicketType = 'single' | 'multiple'
 

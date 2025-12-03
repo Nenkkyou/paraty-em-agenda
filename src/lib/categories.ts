@@ -4,7 +4,8 @@ import {
   ForkKnife, 
   Palette, 
   Tree, 
-  Balloon 
+  Balloon,
+  House
 } from '@phosphor-icons/react'
 
 export const categoryConfig: Record<EventCategory, { label: string; icon: typeof MusicNotes; color: string }> = {
@@ -32,6 +33,11 @@ export const categoryConfig: Record<EventCategory, { label: string; icon: typeof
     label: 'Infantil',
     icon: Balloon,
     color: 'bg-blue-100 text-blue-700 border-blue-200'
+  },
+  hospedagens: {
+    label: 'Hospedagens',
+    icon: House,
+    color: 'bg-amber-100 text-amber-700 border-amber-200'
   }
 }
 

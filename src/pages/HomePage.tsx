@@ -90,7 +90,7 @@ export function HomePage() {
               placeholder="Buscar por evento, local ou palavra-chave..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="pl-12 h-14 text-base bg-card/95 backdrop-blur-sm border-white/20 shadow-lg placeholder:text-white/70 placeholder:font-medium rounded-xl focus:ring-2 focus:ring-white/30 text-white"
+              className="pl-12 h-14 text-base bg-card/95 backdrop-blur-sm border-white/20 shadow-lg placeholder:text-gray-400 placeholder:font-medium rounded-xl focus:ring-2 focus:ring-white/30 text-gray-900"
             />
           </div>
 
